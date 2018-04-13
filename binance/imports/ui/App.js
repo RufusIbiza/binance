@@ -15,7 +15,7 @@ class App extends Component {
       hideCompleted: false,
     };
   }
-
+  
   renderCoins() {
     let filteredCoins = this.props.coins;
     return filteredCoins.map((coin) => (

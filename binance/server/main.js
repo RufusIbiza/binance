@@ -27,12 +27,20 @@ Meteor.startup(() => {
       //we've got the live information from binance
       _.each(markets, function() {
         coinNames = Object.keys(markets);
-        if (!trigger) { 
-          console.log(coinNames); 
-        } else { 
-          trigger = false; 
-        }
-      });
+        _.each(coinNames, function(thisCoin) {
+          for (thisCoin in markets) {
+            //console.log(markets[thisCoin]);
+            coinObj = { "pair": thisCoin, "close": markets[thisCoin].close, "volume": markets[thisCoin].volume };
+            //console.log(coinObj);
+            /* db.Coins.insert( coinObj, function(error, _id) {
+              console.log(coinObj);
+              return coinObj;
+              });
+            }); */
+            var id = db.Coins.insert(coinObj);
+          }
+        });
+      }); 
     });
   });
 });
