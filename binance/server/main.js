@@ -23,24 +23,34 @@ Meteor.startup(() => {
       let {e:eventType, E:eventTime, s:symbol, p:price, q:quantity, m:maker, a:tradeId} = trades;
       console.log(symbol+" trade update. price: "+price+", quantity: "+quantity+", maker: "+maker);
     }); */ //This is to get the live trade information
-    binance.websockets.miniTicker(markets => {
+    binance.websockets.miniTicker(markets => { //remove arrow function here, work with function()
       //we've got the live information from binance
-      _.each(markets, function() {
-        coinNames = Object.keys(markets);
-        _.each(coinNames, function(thisCoin) {
-          for (thisCoin in markets) {
-            //console.log(markets[thisCoin]);
-            coinObj = { "pair": thisCoin, "close": markets[thisCoin].close, "volume": markets[thisCoin].volume };
-            //console.log(coinObj);
-            /* db.Coins.insert( coinObj, function(error, _id) {
-              console.log(coinObj);
-              return coinObj;
-              });
-            }); */
-            var id = db.Coins.insert(coinObj);
-          }
-        });
-      }); 
+
+      //So, generel idea, work with keys to het thru data, pass the objects with function and use it
+      console.log('Startingg: ');
+      console.log(typeof(markets));
+      console.log(markets);
+      for (var i = 0, len = keys.length; i < len; i++) {
+        // someFn(arr[i]);
+        console.log(1);
+        console.log(keys);
+      }
+      // _.each(markets, function() {
+      //   coinNames = Object.keys(markets);
+      //   _.each(coinNames, function(thisCoin) {
+      //     for (thisCoin in markets) {
+      //       //console.log(markets[thisCoin]);
+      //       coinObj = { "pair": thisCoin, "close": markets[thisCoin].close, "volume": markets[thisCoin].volume };
+      //       //console.log(coinObj);
+      //       /* db.Coins.insert( coinObj, function(error, _id) {
+      //         console.log(coinObj);
+      //         return coinObj;
+      //         });
+      //       }); */
+      //       var id = db.Coins.insert(coinObj);
+      //     }
+      //   });
+      // }); 
     });
   });
 });
