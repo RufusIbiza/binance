@@ -1,0 +1,16 @@
+import React, { Component } from 'react';
+import { Coins } from '../api/bot.js';
+ 
+// Task component - represents a single todo item
+export default class Coin extends Component { 
+  render() {
+      // Give tasks a different className when they are checked off,
+    // so that we can style them nicely in CSS
+ 
+    return (
+        <li className={coinClassName}>
+        <span className="text">{this.props.coin.text}</span>
+      </li>
+    );
+  }
+}
