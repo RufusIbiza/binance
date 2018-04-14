@@ -8,8 +8,8 @@ export default class Coin extends Component {
     // so that we can style them nicely in CSS
  
     return (
-        <li className={coinClassName}>
-        <span className="text">{this.props.coin.text}</span>
+        <li>
+        <span className="text">{this.props.coin.pair}</span>
       </li>
     );
   }

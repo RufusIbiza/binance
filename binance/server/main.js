@@ -21,13 +21,15 @@ Meteor.startup(() => {
       for (var i = 0, len = coinNames.length; i < len; i++) {
         for (thisCoin in markets) {
           coinObj = { "pair": thisCoin, "close": markets[thisCoin].close, "volume": markets[thisCoin].volume };
-          let data = db.Coins.findOne({ "pair": coinObj.pair, "close": coinObj.close, "volume": coinObj.volume });
+          let data = db.Coins.findOne({ "pair": coinObj.pair });
           if (!data){
             var id = db.Coins.insert(coinObj);
-            console.log(id);
-            console.log('This does NOT exsists!');
+            console.log(coinObj.pair);
+            //console.log('This does NOT exsists!');
           } else {
-            console.log('This already exists!');
+            //console.log("duplicate")
+            db.Coins.update({ "pair": coinObj.pair}, { "pair": coinObj.pair, "volume": markets[thisCoin].volume, "close": markets[thisCoin].close });
+            console.log('updating ' + coinObj.pair + ' new volume: ' + markets[thisCoin].volume);
           }
         }
       }
