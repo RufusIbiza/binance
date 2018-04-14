@@ -40,13 +40,6 @@ Meteor.startup(() => {
                 console.log(symbol+" last close: "+close);
               }, {limit: 5}));
               //if there's 5 or more close values, we can generate RSI from the close values
-              if (closeValues.length > 5) {
-                var inputRSI = { values: closeValues, period: 5};
-                //console.log(inputRSI);
-                var RSIresult = RSI.calculate(inputRSI);
-                //console.log(RSIresult[0]);
-                closeValues.shift();
-              }
               //update the information in the db
               var id = db.Coins.update({ "pair": coinObj.pair}, { "pair": coinObj.pair, "volume": markets[thisCoin].volume, "close": closeValues });
           }
