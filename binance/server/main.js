@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import '../imports/api/bot.js';
 const binance = require('node-binance-api');
+const RSI = require('technicalindicators').RSI;
 Fiber = Npm.require('fibers');
 
 binance.options({
@@ -20,17 +21,37 @@ Meteor.startup(() => {
       coinNames = Object.keys(markets);
       for (var i = 0, len = coinNames.length; i < len; i++) {
         for (thisCoin in markets) {
-          coinObj = { "pair": thisCoin, "close": markets[thisCoin].close, "volume": markets[thisCoin].volume };
+          coinObj = { "pair": thisCoin, "close": [markets[thisCoin].close], "volume": markets[thisCoin].volume };
           let data = db.Coins.findOne({ "pair": coinObj.pair });
           if (!data){
             var id = db.Coins.insert(coinObj);
-            console.log(coinObj.pair);
-            //console.log('This does NOT exsists!');
+            //console.log(coinObj.pair);
+            //this coin doesn't exist in the db yet
           } else {
-            //console.log("duplicate")
-            db.Coins.update({ "pair": coinObj.pair}, { "pair": coinObj.pair, "volume": markets[thisCoin].volume, "close": markets[thisCoin].close });
-            console.log('updating ' + coinObj.pair + ' new volume: ' + markets[thisCoin].volume);
+            // this coin is already in the db
+            //get the close data already in the database and add the latest update 
+              var closeValues = data.close;
+              closeValues.push(markets[thisCoin].close);
+              //get the binance candlestick data for this coin, so we can calculate the RSI
+              binance.candlesticks( Meteor.bindEnvironment(thisCoin, '1m', (error, ticks, symbol) => {
+                console.log("candlesticks()", ticks);
+                let last_tick = ticks[ticks.length - 1];
+                let [time, open, high, low, close, volume, closeTime, assetVolume, trades, buyBaseVolume, buyAssetVolume, ignored] = last_tick;
+                console.log(symbol+" last close: "+close);
+              }, {limit: 5}));
+              //if there's 5 or more close values, we can generate RSI from the close values
+              if (closeValues.length > 5) {
+                var inputRSI = { values: closeValues, period: 5};
+                //console.log(inputRSI);
+                var RSIresult = RSI.calculate(inputRSI);
+                //console.log(RSIresult[0]);
+                closeValues.shift();
+              }
+              //update the information in the db
+              var id = db.Coins.update({ "pair": coinObj.pair}, { "pair": coinObj.pair, "volume": markets[thisCoin].volume, "close": closeValues });
           }
+          //now get the latest candlestick data for this coin
+
         }
       }
     }));

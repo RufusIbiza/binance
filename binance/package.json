@@ -9,6 +9,8 @@
     "meteor-node-stubs": "^0.3.2",
     "node-binance-api": "^0.4.27",
     "react": "^16.3.1",
-    "react-dom": "^16.3.1"
+    "react-dom": "^16.3.1",
+    "technicalindicators": "^1.1.10",
+    "tulind": "^0.8.10"
   }
 }
